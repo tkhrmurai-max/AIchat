@@ -25,20 +25,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          # cache: 'npm' を削除（lockファイルがない場合のエラー回避）
 
       - name: Install dependencies
-        # 'npm ci' から 'npm install' に変更（lockファイルがなくても動くようにする）
         run: npm install
 
       - name: Build
+        # ↓↓↓ ここが今回追加される重要な部分です！ ↓↓↓
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        # ↑↑↑↑↑↑
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # もしViteなら 'dist'、CRAなら 'build' です。
-          # いったん 'dist' で試しますが、エラーが続く場合はここを疑います
           path: ./dist
 
   deploy:
