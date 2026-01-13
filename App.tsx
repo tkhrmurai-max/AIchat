@@ -3,13 +3,14 @@ import { Message, Attachment } from './types';
 import { sendMessageToGemini } from './services/geminiService';
 import { MessageBubble } from './components/MessageBubble';
 import { DisclaimerModal } from './components/DisclaimerModal';
+import { EstimateFormModal } from './components/EstimateFormModal';
 import { ThinkingIndicator } from './components/ThinkingIndicator';
 import { SuggestionActions } from './components/SuggestionActions';
 
 const INITIAL_MESSAGE: Message = {
   id: 'init-1',
   role: 'model',
-  content: '<p>こんにちは。<strong>ユアクラウド会計事務所AI</strong>です。</p><p>税務・会計・経理・法務・労務に関する幅広いご質問にお答えします。</p><p>公的機関の情報を優先的に参照しつつ、信頼できる情報源をもとに回答を作成します。</p><ul><li>「インボイス制度の登録要件は？」(税務)</li><li>「接待交際費の損金算入ルールは？」(経理)</li><li>「36協定の届出について教えて」(労務)</li><li>「契約書の収入印紙の金額は？」(法務)</li></ul><p>また、<strong>資料（PDFや画像）を添付</strong>して質問することも可能です。</p>',
+  content: '<p>こんにちは。<strong>ユアクラウド会計事務所【AI支店】</strong>です。</p><p>税務・会計・経理・労務・法務の実務相談に加え、サービス内容・契約・お見積りに関するご質問も承っております。</p><p>以下のようなご相談が可能です：</p><ul><li>「インボイス制度の対応方法は？」(税務)</li><li>「接待交際費の損金算入ルールは？」(経理)</li><li>「法人の住所変更の手続について教えて」（法務・税務）</li><li>「法人の顧問料はいくらから？」(見積)</li><li>「クラウド会計の導入支援は頼める？」(サービス)</li><li>「契約までの流れを教えて」(契約)</li></ul><p><strong>「AI見積」</strong>をご利用いただくと、簡単な質問に答えるだけで概算のお見積りを提示し、正式なお見積り作成へスムーズにご案内します。</p>',
   timestamp: new Date(),
 };
 
@@ -18,6 +19,7 @@ export default function App() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false);
+  const [isEstimateModalOpen, setIsEstimateModalOpen] = useState(false);
   const [pendingAttachments, setPendingAttachments] = useState<Attachment[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -77,17 +79,14 @@ export default function App() {
     // Use override text (from suggestions) or input value
     let userText = overrideText !== undefined ? overrideText : inputValue.trim();
     
-    // Special handling for initial state suggestions (Context: No prior user questions)
-    // If the user clicks suggestions on the very first screen, map them to usage instructions for the AI.
-    if (messages.length === 1 && overrideText) {
+    // Special handling for suggestions
+    if (overrideText) {
       if (overrideText === "もっと詳しく教えて") {
-        userText = "この「ユアクラウド会計事務所AI」の使い方や、対応している相談範囲について詳しく教えてください。";
-      } else if (overrideText === "もっと簡単に説明して") {
-        userText = "このAIチャットを使うと何ができるのですか？初心者向けに簡単に説明してください。";
-      } else if (overrideText === "具体例を教えて") {
-        userText = "このAIチャットで相談できる質問の具体例を、税務・法務・労務などの分野別にいくつか教えてください。";
+        userText = "今の回答について、もう少し詳しく、具体的な根拠も含めて教えてください。";
+      } else if (overrideText === "ユアクラウドについて") {
+        userText = "ユアクラウド会計事務所のサービスの特徴や強み、対応エリアなどについて教えてください。";
       }
-      // "ユアクラウド会計事務所について教えて" sends the text as is, which is handled by the system prompt's knowledge base.
+      // "AI簡易見積を試す" is handled by handleSuggestionClick opening the modal
     }
 
     const isTextEmpty = !userText;
@@ -142,6 +141,27 @@ export default function App() {
     }
   };
 
+  const handleEstimateSubmit = (data: any) => {
+    setIsEstimateModalOpen(false);
+    
+    // Construct a structured prompt for the AI
+    const prompt = `
+AI簡易見積をお願いします。
+以下の私のビジネス状況に基づいて、概算の顧問料や決算料、およびおすすめのプランを提示してください。
+
+【入力情報】
+・事業形態：${data.businessType}
+・年商規模：${data.annualSales}
+・従業員数：${data.employees}
+・利用会計ソフト：${data.software} (※原則freee/MFのみ対応と理解しています)
+・希望プラン：${data.plan}
+・消費税納税義務：${data.consumptionTax}
+・その他要望：${data.other || '特になし'}
+`.trim();
+
+    handleSendMessage(undefined, prompt);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.nativeEvent.isComposing) return;
 
@@ -158,6 +178,10 @@ export default function App() {
   };
 
   const handleSuggestionClick = (text: string) => {
+    if (text === "AI簡易見積を試す") {
+      setIsEstimateModalOpen(true);
+      return;
+    }
     handleSendMessage(undefined, text);
   };
 
@@ -167,22 +191,34 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-900 font-sans">
       <DisclaimerModal onAccept={() => setIsDisclaimerAccepted(true)} />
+      
+      <EstimateFormModal 
+        isOpen={isEstimateModalOpen} 
+        onClose={() => setIsEstimateModalOpen(false)}
+        onSubmit={handleEstimateSubmit}
+      />
 
       {/* Header */}
-      <header className="flex-none bg-white border-b border-gray-200 px-6 py-4 shadow-sm z-10">
+      <header className="flex-none bg-white border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4 shadow-sm z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 flex items-center justify-center bg-blue-600 rounded-lg text-white shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center bg-blue-600 rounded-lg text-white shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                 <path fillRule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clipRule="evenodd" />
               </svg>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800 tracking-tight">ユアクラウド会計事務所AI</h1>
-              <p className="text-xs text-gray-500 font-medium">税務・会計・経理・法務・労務相談チャット</p>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-800 tracking-tight leading-tight">ユアクラウド会計事務所【AI支店】</h1>
+              <p className="text-[10px] sm:text-xs text-gray-500 font-medium">税務・会計・労務・法務・契約・サービス・見積相談</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsEstimateModalOpen(true)}
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all shadow-sm flex items-center gap-1 active:scale-95"
+            >
+              <span className="text-sm">🤖</span> AI見積
+            </button>
             <a 
               href="https://ur-cloud.jp/contact" 
               target="_blank" 
@@ -191,9 +227,6 @@ export default function App() {
             >
               お問い合わせ
             </a>
-            <div className="hidden sm:block text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-              Powered by Gemini 3 Pro
-            </div>
           </div>
         </div>
       </header>
