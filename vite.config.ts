@@ -5,15 +5,15 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
-      // ↓↓↓ この1行が消えていたので復活させます
+      // ↓↓↓ リポジトリ名（住所）の設定
       base: '/AIchat/', 
-      // ↑↑↑
       
       server: {
         port: 3000,
         host: '0.0.0.0',
       },
       plugins: [react()],
+      // ↓↓↓ APIキーをアプリに渡す設定
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
