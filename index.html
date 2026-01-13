@@ -1,9 +1,23 @@
+<script type="importmap">
+{
+  "imports": {
+    "path": "https://esm.sh/path@^0.12.7",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "marked": "https://esm.sh/marked@^17.0.1"
+  }
+}
+</script>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ユアクラウド会計事務所AI</title>
+    <title>ユアクラウド会計事務所【AI支店】</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -38,23 +52,16 @@
         padding-bottom: 0.25em;
         border-bottom: 1px solid #dbeafe; /* blue-100 */
       }
-      .prose-content h1:first-child,
-      .prose-content h2:first-child {
-        margin-top: 0;
-      }
       .prose-content h3 {
         font-size: 1rem; /* text-base */
         font-weight: 700;
-        color: #374151; /* gray-700 */
+        color: #1f2937; /* gray-800 */
         margin-top: 1.25em;
         margin-bottom: 0.5em;
       }
       .prose-content p {
         margin-bottom: 1em;
         line-height: 1.75;
-      }
-      .prose-content p:last-child {
-        margin-bottom: 0;
       }
       .prose-content ul {
         list-style-type: disc;
@@ -67,62 +74,73 @@
         margin-bottom: 1em;
       }
       .prose-content li {
-        margin-bottom: 0.25em;
+        margin-bottom: 0.5em;
       }
       .prose-content strong {
         font-weight: 700;
-        color: #111827;
-        background: rgba(254, 240, 138, 0.5); /* yellow-200 */
-        padding: 0 0.1em;
-        border-radius: 2px;
+        color: #111827; /* gray-900 */
+      }
+      .prose-content a {
+        color: #2563eb; /* blue-600 */
+        text-decoration: underline;
+        font-weight: 500;
+      }
+      .prose-content a:hover {
+        color: #1d4ed8; /* blue-700 */
       }
       .prose-content table {
         width: 100%;
+        margin-bottom: 1.5em;
         border-collapse: collapse;
-        margin-bottom: 1em;
-        font-size: 0.9em;
-        background-color: #fff;
-        border: 1px solid #e5e7eb;
+        font-size: 0.875rem; /* text-sm */
       }
       .prose-content th {
-        background-color: #f9fafb;
+        background-color: #f9fafb; /* gray-50 */
         font-weight: 600;
         text-align: left;
-        padding: 0.5em 0.75em;
-        border: 1px solid #e5e7eb;
+        padding: 0.75em;
+        border: 1px solid #e5e7eb; /* gray-200 */
       }
       .prose-content td {
-        padding: 0.5em 0.75em;
-        border: 1px solid #e5e7eb;
+        padding: 0.75em;
+        border: 1px solid #e5e7eb; /* gray-200 */
       }
-      .prose-content a {
-        color: #2563eb;
-        text-decoration: underline;
-        transition: color 0.2s;
+      .prose-content blockquote {
+        border-left: 4px solid #e5e7eb; /* gray-200 */
+        padding-left: 1em;
+        font-style: italic;
+        color: #4b5563; /* gray-600 */
+        margin-bottom: 1em;
       }
-      .prose-content a:hover {
-        color: #1e40af;
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      .prose-content hr {
-        border-color: #e5e7eb;
-        margin-top: 1.5em;
-        margin-bottom: 1.5em;
+      .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out forwards;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "marked": "https://esm.sh/marked@12.0.0"
-  }
-}
-</script>
+  <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

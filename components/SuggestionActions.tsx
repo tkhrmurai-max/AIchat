@@ -6,10 +6,10 @@ interface SuggestionActionsProps {
 
 export const SuggestionActions: React.FC<SuggestionActionsProps> = ({ onSelect }) => {
   const suggestions = [
+    { label: "AI簡易見積を試す", icon: "🤖" },
+    { label: "ユアクラウドについて", icon: "🏢" },
     { label: "もっと詳しく教えて", icon: "🔍" },
-    { label: "もっと簡単に説明して", icon: "💡" },
     { label: "具体例を教えて", icon: "📝" },
-    { label: "ユアクラウド会計事務所について教えて", icon: "🏢" },
   ];
 
   return (
@@ -18,16 +18,25 @@ export const SuggestionActions: React.FC<SuggestionActionsProps> = ({ onSelect }
         続けて追加の質問も可能です
       </p>
       <div className="flex flex-wrap gap-2 justify-end sm:justify-start">
-        {suggestions.map((suggestion, index) => (
-          <button
-            key={index}
-            onClick={() => onSelect(suggestion.label)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-blue-200 text-blue-700 text-xs font-bold rounded-full hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm active:scale-95"
-          >
-            <span>{suggestion.icon}</span>
-            {suggestion.label}
-          </button>
-        ))}
+        {suggestions.map((suggestion, index) => {
+          const isEstimate = suggestion.label === "AI簡易見積を試す";
+          return (
+            <button
+              key={index}
+              onClick={() => onSelect(suggestion.label)}
+              className={`
+                flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 border
+                ${isEstimate 
+                  ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-800 border-orange-200 hover:from-orange-100 hover:to-orange-200' 
+                  : 'bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300'
+                }
+              `}
+            >
+              <span>{suggestion.icon}</span>
+              {suggestion.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

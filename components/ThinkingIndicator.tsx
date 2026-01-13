@@ -9,7 +9,7 @@ export const ThinkingIndicator: React.FC = () => {
                 <path fillRule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clipRule="evenodd" />
              </svg>
           </div>
-          <div className="text-sm text-gray-500 font-medium">公的情報を検索中...</div>
+          <div className="text-sm text-gray-500 font-medium">回答を準備中...</div>
           <div className="flex space-x-1">
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
