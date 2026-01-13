@@ -1,4 +1,5 @@
 import React from 'react';
+import { marked } from 'marked';
 import { Message } from '../types';
 import { SourceChips } from './SourceChips';
 
@@ -9,6 +10,30 @@ interface MessageBubbleProps {
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.role === 'user';
   const isError = message.isError;
+
+  // Configure marked to open links in new tab and handle breaks
+  marked.use({
+    breaks: true, // Enable line breaks for single newlines
+    gfm: true,    // Enable GitHub Flavored Markdown
+    renderer: {
+      link(href, title, text) {
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${title || ''}">${text}</a>`;
+      }
+    }
+  });
+
+  const getHtmlContent = (content: string) => {
+    try {
+      // If it's the model, parse markdown. If it's user, just preserve newlines.
+      if (!isUser) {
+        return marked.parse(content) as string;
+      }
+      return content;
+    } catch (e) {
+      console.error('Markdown parsing error:', e);
+      return content;
+    }
+  };
 
   return (
     <div className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-6 group`}>
@@ -74,7 +99,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           ) : (
             <div 
               className="text-sm sm:text-base prose-content"
-              dangerouslySetInnerHTML={{ __html: message.content }} 
+              dangerouslySetInnerHTML={{ __html: getHtmlContent(message.content) }} 
             />
           )
         )}

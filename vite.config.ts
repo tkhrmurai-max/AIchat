@@ -5,10 +5,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
-      // ↓↓↓ ここを追加しました（Github Pages用の設定）
-      base: '/AIchat/', 
-      // ↑↑↑ ここまで
-      
       server: {
         port: 3000,
         host: '0.0.0.0',

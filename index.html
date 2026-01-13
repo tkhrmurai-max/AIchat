@@ -28,6 +28,7 @@
       }
 
       /* Chat Bubble HTML Content Styling */
+      .prose-content h1,
       .prose-content h2 {
         font-size: 1.125rem; /* text-lg */
         font-weight: 700;
@@ -37,6 +38,7 @@
         padding-bottom: 0.25em;
         border-bottom: 1px solid #dbeafe; /* blue-100 */
       }
+      .prose-content h1:first-child,
       .prose-content h2:first-child {
         margin-top: 0;
       }
@@ -101,6 +103,11 @@
       .prose-content a:hover {
         color: #1e40af;
       }
+      .prose-content hr {
+        border-color: #e5e7eb;
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+      }
     </style>
   <script type="importmap">
 {
@@ -108,7 +115,8 @@
     "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "marked": "https://esm.sh/marked@12.0.0"
   }
 }
 </script>

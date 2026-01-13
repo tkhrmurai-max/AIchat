@@ -4,6 +4,7 @@ import { sendMessageToGemini } from './services/geminiService';
 import { MessageBubble } from './components/MessageBubble';
 import { DisclaimerModal } from './components/DisclaimerModal';
 import { ThinkingIndicator } from './components/ThinkingIndicator';
+import { SuggestionActions } from './components/SuggestionActions';
 
 const INITIAL_MESSAGE: Message = {
   id: 'init-1',
@@ -70,14 +71,30 @@ export default function App() {
     setPendingAttachments([]);
   };
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent, overrideText?: string) => {
     e?.preventDefault();
-    const isTextEmpty = !inputValue.trim();
+    
+    // Use override text (from suggestions) or input value
+    let userText = overrideText !== undefined ? overrideText : inputValue.trim();
+    
+    // Special handling for initial state suggestions (Context: No prior user questions)
+    // If the user clicks suggestions on the very first screen, map them to usage instructions for the AI.
+    if (messages.length === 1 && overrideText) {
+      if (overrideText === "もっと詳しく教えて") {
+        userText = "この「ユアクラウド会計事務所AI」の使い方や、対応している相談範囲について詳しく教えてください。";
+      } else if (overrideText === "もっと簡単に説明して") {
+        userText = "このAIチャットを使うと何ができるのですか？初心者向けに簡単に説明してください。";
+      } else if (overrideText === "具体例を教えて") {
+        userText = "このAIチャットで相談できる質問の具体例を、税務・法務・労務などの分野別にいくつか教えてください。";
+      }
+      // "ユアクラウド会計事務所について教えて" sends the text as is, which is handled by the system prompt's knowledge base.
+    }
+
+    const isTextEmpty = !userText;
     const isAttachmentsEmpty = pendingAttachments.length === 0;
 
     if ((isTextEmpty && isAttachmentsEmpty) || isLoading) return;
 
-    const userText = inputValue.trim();
     const currentAttachments = [...pendingAttachments];
     
     setInputValue('');
@@ -140,6 +157,13 @@ export default function App() {
       e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
   };
 
+  const handleSuggestionClick = (text: string) => {
+    handleSendMessage(undefined, text);
+  };
+
+  const lastMessage = messages[messages.length - 1];
+  const showSuggestions = !isLoading && lastMessage?.role === 'model' && !lastMessage.isError;
+
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-900 font-sans">
       <DisclaimerModal onAccept={() => setIsDisclaimerAccepted(true)} />
@@ -181,6 +205,9 @@ export default function App() {
             <MessageBubble key={msg.id} message={msg} />
           ))}
           {isLoading && <ThinkingIndicator />}
+          {showSuggestions && (
+            <SuggestionActions onSelect={handleSuggestionClick} />
+          )}
           <div ref={messagesEndRef} />
         </div>
       </main>
