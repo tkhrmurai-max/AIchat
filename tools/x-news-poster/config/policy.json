@@ -1,0 +1,33 @@
+{
+  "account": {
+    "name": "ユアクラウド会計事務所【AI支店】",
+    "operator": "クラウドパートナーズグループ（税理士法人／社会保険労務士法人／株式会社）",
+    "voice": "実務者向け。誇張せず、事実と出典を先に置く。断定的な税務判断はしない。"
+  },
+  "posting": {
+    "maxPostsPerDay": 3,
+    "minMinutesBetweenPosts": 90,
+    "requireHumanApproval": true,
+    "requireSourceUrl": true,
+    "dedupeWindowDays": 30
+  },
+  "content": {
+    "hashtagPool": ["#会計", "#税務", "#インボイス", "#電子帳簿保存法", "#freee", "#マネーフォワード", "#経理"],
+    "maxHashtags": 3,
+    "bannedPhrases": [
+      "必ず節税できます",
+      "絶対に得します",
+      "税務調査は来ません",
+      "確実に還付されます",
+      "脱税"
+    ],
+    "cautionPhrases": [
+      "必ず",
+      "絶対",
+      "確実に",
+      "100%",
+      "誰でも"
+    ],
+    "requiredNotice": "制度・数値は投稿時点の情報です。適用可否は個別にご確認ください。"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "x-news-poster",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "freee/マネーフォワード・会計財務ニュースを収集し、下書きを生成し、確認のうえXへ投稿するMCPサーバー兼CLI",
+  "bin": {
+    "x-news-poster": "src/cli.js"
+  },
+  "scripts": {
+    "mcp": "node src/mcp/server.js",
+    "diagnose": "node src/cli.js diagnose",
+    "feeds:check": "node src/cli.js feeds:check",
+    "collect": "node src/cli.js collect",
+    "draft": "node src/cli.js draft",
+    "list": "node src/cli.js list",
+    "post": "node src/cli.js post",
+    "test": "node --test test/unit.test.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.35.0",
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
